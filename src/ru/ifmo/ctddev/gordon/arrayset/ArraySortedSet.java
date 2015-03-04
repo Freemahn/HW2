@@ -7,34 +7,31 @@ import java.util.*;
  */
 public class ArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, Collection<E> {
 
-    List<E> m = new ArrayList<>();
-    Comparator<? super E> comparator;
+    private List<E> data = new ArrayList<>();
+    private Comparator<? super E> comparator;
 
     public ArraySortedSet(Collection<E> c) {
-        m = new ArrayList<>();
         for (E item : c)
             if (!contains(item))
-                m.add(item);
-        m.sort(null);
-
-
+                data.add(item);
+        data.sort(null);
     }
 
     public ArraySortedSet() {
-        m = new ArrayList<>();
+
     }
 
     public ArraySortedSet(Collection<E> c, Comparator<? super E> comp) {
         comparator = comp;
         for (E item : c)
             if (!contains(item))
-                m.add(item);
-        m.sort(comparator);
+                data.add(item);
+        data.sort(comparator);
 
     }
 
-    ArraySortedSet(List<E> list, Comparator<? super E> comp) {
-        m = list;
+    private ArraySortedSet(List<E> list, Comparator<? super E> comp) {
+        data = list;
         comparator = comp;
 
     }
@@ -53,35 +50,40 @@ public class ArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, C
     @Override
     public SortedSet<E> headSet(E toElement) {
 
-        int i = Collections.binarySearch(m, toElement, comparator);
+        int i = Collections.binarySearch(data, toElement, comparator);
         if (i >= 0)
-            return new ArraySortedSet<>(m.subList(0, i), comparator);
+            return new ArraySortedSet<>(data.subList(0, i), comparator);
         else
-            return new ArraySortedSet<>(m.subList(0, -i - 1), comparator);
+            return new ArraySortedSet<>(data.subList(0, -i - 1), comparator);
     }
 
     @Override
     public SortedSet<E> tailSet(E fromElement) {
-        int i = Collections.binarySearch(m, fromElement, comparator);
+        int i = Collections.binarySearch(data, fromElement, comparator);
         List<E> temp;
-        if (i >= 0)
-            temp = m.subList(i, m.size());
-        else
-            temp = m.subList(-i - 1, m.size());
+        if (i >= 0) {
+            temp = data.subList(i, data.size());
+        } else {
+            temp = data.subList(-i - 1, data.size());
+        }
 
         return new ArraySortedSet<E>(temp, comparator);
     }
 
     @Override
     public boolean contains(Object o) {
-        return Collections.binarySearch(m, (E) o, comparator) >= 0;
+        return Collections.binarySearch(data, (E) o, comparator) >= 0;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if (m.isEmpty()) return m.containsAll(c);
+        if (data.isEmpty()) {
+            return data.containsAll(c);
+        }
         for (Object e : c) {
-            if (contains(e)) return true;
+            if (contains(e)) {
+                return true;
+            }
         }
         return false;
     }
@@ -97,7 +99,7 @@ public class ArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, C
         Iterator<E> currentIterator;
 
         MyIterator() {
-            currentIterator = m.iterator();
+            currentIterator = data.iterator();
 
         }
 
@@ -120,35 +122,34 @@ public class ArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, C
 
     @Override
     public E first() {
-        if (m.isEmpty()) throw new NoSuchElementException();
-        return m.get(0);
+        if (data.isEmpty()) throw new NoSuchElementException();
+        return data.get(0);
     }
 
     @Override
     public E last() {
-        if (m.isEmpty()) throw new NoSuchElementException();
-        return m.get(m.size() - 1);
+        if (data.isEmpty()) throw new NoSuchElementException();
+        return data.get(data.size() - 1);
     }
 
     @Override
     public int size() {
-        return m.size();
+        return data.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return m.isEmpty();
+        return data.isEmpty();
     }
-
 
     @Override
     public Object[] toArray() {
-        return m.toArray();
+        return data.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return m.toArray(a);
+        return data.toArray(a);
     }
 
     @Override
@@ -160,7 +161,6 @@ public class ArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, C
     public boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
-
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
